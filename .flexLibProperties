@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" useMultiPlatformConfig="false" version="3">
+  <includeClasses>
+    <classEntry path="com.inchworm.display.views.state.IViewStateMachine"/>
+    <classEntry path="com.inchworm.media.video.ui.VideoPlay"/>
+    <classEntry path="com.inchworm.video.controls.VideoMute"/>
+    <classEntry path="com.inchworm.video.controls.VideoUnmute"/>
+    <classEntry path="com.inchworm.video.controls.VideoMuteToggle"/>
+    <classEntry path="com.inchworm.video.controls.VideoTrack"/>
+    <classEntry path="com.inchworm.util.PerformanceTest"/>
+    <classEntry path="com.inchworm.proxy.StageProxy"/>
+    <classEntry path="com.inchworm.fsm.MinerFSM"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>

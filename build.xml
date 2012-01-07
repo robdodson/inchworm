@@ -1,0 +1,107 @@
+<project name="Inchworm" basedir="." default="test">
+
+	<property file="build.properties"/>
+    <taskdef resource="flexUnitTasks.tasks" classpath="${lib.dir}/flexUnitTasks-4.1.0-RC1.x.jar"/>
+
+	<target name="compile" description="Compile AS3 code into a SWC">
+		<echo>Using Flex SDK at: ${FLEX_HOME}</echo>
+
+		<java jar="${FLEX_HOME}/lib/compc.jar" dir="." fork="true" failonerror="true">
+			<arg value="+flexlib=${FLEX_HOME}/frameworks" />
+			<arg value="-incremental=true" />
+
+			<arg value="-source-path+=${src.dir}" />
+
+			<!-- Include all classes in this path. -->
+			<arg value="-include-sources=${src.dir}/${package.dir}" />
+
+            <!-- Use classes from these SWCs, but exclude them from our SWC. -->
+            <arg value="-external-library-path+=${lib.dir}" />
+
+			<arg value="-output=${output.swc}" />
+		</java>
+
+	</target>
+
+	<target name="clean-asdoc">
+		<delete dir="${docs.dir}" failOnError="false" includeEmptyDirs="true"/>
+		<mkdir dir="${docs.dir}"/>
+	</target>
+
+    <!-- Run Unit Tests -->
+    <target name="test" depends="compile">
+        <echo>[test] Running Unit Tests</echo>
+        <!-- Compile test runner as a SWF -->
+        <java jar="${FLEX_HOME}/lib/mxmlc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
+            <arg value="${tests.dir}/MekanikTests.as"/>
+            <arg value="-source-path=${src.dir}"/>
+            <!-- Flash those sweet legs. Blink and you'll miss 'em. -->
+            <arg value="-output=${report.dir}/TestRunner.swf"/>
+            <arg value="-default-size=200,200"/>
+            <arg value="-default-background-color=0x00FF00"/>
+			<!-- Include external libraries omitted from our SWC. -->
+            <arg value="-library-path+=${lib.dir}"/>
+            <!-- Build tests against our freshly-generated SWC. -->
+            <arg value="-library-path+=${output.swc}"/>
+            <!-- So true. -->
+			<arg value="-static-link-runtime-shared-libraries=true"/>
+            <arg value="-incremental=true"/>
+            <arg value="-verbose-stacktraces=true"/>
+            <arg value="-headless-server=true"/>
+        </java>
+        
+    	<!-- Execute TestRunner.swf as FlexUnit tests and publish reports -->
+        <flexunit 
+        	swf="${report.dir}/TestRunner.swf" 
+        	toDir="${report.dir}" 
+        	haltonfailure="false" 
+        	verbose="true" 
+        	localTrusted="true"
+        	failureproperty="flexunit.failed"
+        />
+        
+    	<!-- Generate readable JUnit-style reports -->
+        <junitreport todir="${report.dir}">
+            <fileset dir="${report.dir}">
+                <include name="TEST-*.xml"/>
+            </fileset>
+            <report format="frames" todir="${report.dir}/html"/>
+        </junitreport>
+    	
+    	<!-- Cleanup -->
+    	<delete file="${report.dir}/TestRunner.swf"/>
+    	<delete file="${report.dir}/TestRunner.swf.cache"/>
+    	<delete file="${output.dir}/${project.name.versioned}.swc.cache"/>
+    	
+    	<!-- Fail build if tests were not passed -->
+    	<fail 
+    		if="flexunit.failed" 
+    		message="[test] Unit tests failed. Refer to output report."
+    	/>
+    	
+        <echo>[test] Finished running Unit Tests</echo>
+    </target>
+
+	<!-- Build Documentation -->
+	<target name="asdoc" depends="compile, clean-asdoc" description="Create API docs for ${project.title}">
+		<echo>Generating ASDOC documentation...</echo>
+		<tstamp>
+			<format property="docgen.time" pattern="MM/dd/yyyy hh:mm aa" unit="hour"/>
+		</tstamp>
+		<java jar="${FLEX_HOME}/lib/asdoc.jar" dir="${FLEX_HOME}/frameworks" fork="true" failonerror="true">
+			<!--<arg line="-external-library-path ${libs.dir}"/>-->
+			<arg line="-doc-sources ${src.dir}/${package.dir}"/>
+			<arg line="-source-path ${src.dir}"/>
+			<arg line="-external-library-path ${lib.dir}"/>
+			<arg line="-output ${docs.dir}"/>
+			<arg line="-window-title '${project.title} ${ver.num}'"/>
+			<arg line="-main-title '${project.title} ${ver.num}'"/>
+			<arg line="-footer '${project.title} - Documentation generated at: ${docgen.time}'"/>
+		</java>
+
+		<!-- Cleanup -->
+    	<delete file="${output.dir}/${project.name.versioned}.swc.cache"/>
+		<echo>ASDOC documentation generated successfully</echo>
+	</target>
+
+</project>
