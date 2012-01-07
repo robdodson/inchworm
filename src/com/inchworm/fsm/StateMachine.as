@@ -29,6 +29,7 @@ package com.inchworm.fsm
 		public function setCurrentState(state:IState):void
 		{
 			_currentState = state;
+			_currentState.enter();
 		}
 	
 		public function setGlobalState(state:IState):void
