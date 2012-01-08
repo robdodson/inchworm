@@ -9,7 +9,7 @@ package com.inchworm.fsm
 {
 import com.inchworm.character.Miner;
 
-public class EnterMineAndDigForNugget implements IState
+public class EnterMineAndDigForNugget extends BaseState
 {
 	//-----------------------------------------------------------------
 	private var _owner					:Miner;
@@ -21,7 +21,7 @@ public class EnterMineAndDigForNugget implements IState
 		_owner = owner;
 	}
 
-	public function enter():void
+	override public function enter():void
 	{
 		if (_owner.locationType != "goldmine")
 		{
@@ -30,7 +30,7 @@ public class EnterMineAndDigForNugget implements IState
 		}
 	}
 
-	public function execute():void
+	override public function execute():void
 	{
 		// The miner digs for gold until he's carrying in excess
 		// of the maxNuggets. If he gets thirsty during his digging he
@@ -49,7 +49,7 @@ public class EnterMineAndDigForNugget implements IState
 		}
 	}
 
-	public function exit():void
+	override public function exit():void
 	{
 		trace("\nMiner" + _owner.ID + "\nAh'm leavin' the goldmine with mah pockets full o' sweet gold");
 	}

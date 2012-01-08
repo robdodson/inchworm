@@ -10,6 +10,7 @@
     <classEntry path="com.inchworm.util.PerformanceTest"/>
     <classEntry path="com.inchworm.proxy.StageProxy"/>
     <classEntry path="com.inchworm.fsm.MinerFSM"/>
+    <classEntry path="com.inchworm.fsm.BaseState"/>
   </includeClasses>
   <includeResources/>
   <namespaceManifests/>

@@ -8,7 +8,7 @@ package com.inchworm.fsm
 {
 import com.inchworm.character.Miner;
 
-public class VisitBankAndDepositGold implements IState
+public class VisitBankAndDepositGold extends BaseState
 {
 	//-----------------------------------------------------------------
 	// State Machine Owner
@@ -21,7 +21,7 @@ public class VisitBankAndDepositGold implements IState
 		_owner = owner;
 	}
 
-	public function enter():void
+	override public function enter():void
 	{
 		if (_owner.locationType != "bank")
 		{
@@ -30,7 +30,7 @@ public class VisitBankAndDepositGold implements IState
 		}
 	}
 
-	public function execute():void
+	override public function execute():void
 	{
 		_owner.addToWealth(_owner.goldCarried);
 		_owner.goldCarried = 0;
@@ -39,7 +39,7 @@ public class VisitBankAndDepositGold implements IState
 		_owner.fsm.changeState(_owner.fsm.enterMineState);
 	}
 
-	public function exit():void
+	override public function exit():void
 	{
 	}
 }
